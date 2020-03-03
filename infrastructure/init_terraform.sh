@@ -1,9 +1,3 @@
-#docker container run -it --rm --mount type=bind,source="$PWD",target=/workspace zenika/terraform-azure-cli:latest
-#apt-get install jq
-#az login
-#./infrastructure/init_terraform.sh 
-
-
 #Path to terraform config
 TERRAFORM_CONFIG=variables.tf.json
 
@@ -24,16 +18,19 @@ STORAGE_ACCOUNT_SKU=${PLAN_TIER}_${REPLICATION_TYPE}
 STORAGE_CONTAINER_URL=https://$STORAGE_ACCOUNT_NAME.blob.core.windows.net/$TERRAFORM_BACKEND_STATE_CONTAINER_NAME
 
 # Create resource group
+echo "Creating resource group ......"
 RESOURCE_GROUP_ID=$(az group create --name $RESOURCE_GROUP_NAME --location $LOCATION --query 'id' -o tsv)
 
 # Create storage account
+echo "Creating storage account ......"
 STORAGE_ACCOUNT_ID=$(az storage account create --resource-group $RESOURCE_GROUP_NAME --name $STORAGE_ACCOUNT_NAME --sku $STORAGE_ACCOUNT_SKU --encryption-services blob --query 'id' -o tsv)
 
 # Get storage account key
 ACCOUNT_KEY=$(az storage account keys list --resource-group $RESOURCE_GROUP_NAME --account-name $STORAGE_ACCOUNT_NAME --query [0].value -o tsv)
 
 # Create blob container
-az storage container create --name $TERRAFORM_BACKEND_STATE_CONTAINER_NAME --account-name $STORAGE_ACCOUNT_NAME --account-key $ACCOUNT_KEY
+echo "Creating blob container ......"
+CONTAINER_SUCCESS=$(az storage container create --name $TERRAFORM_BACKEND_STATE_CONTAINER_NAME --account-name $STORAGE_ACCOUNT_NAME --account-key $ACCOUNT_KEY)
 
 # Initialize terraform to use our storage account for remote storage
 terraform init \
