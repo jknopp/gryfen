@@ -9,10 +9,12 @@ This template deploys an [Azure App Service](https://www.terraform.io/docs/provi
 |-|-|
 | name | Name of the deployment |
 | environment | The depolyment environment name (used for postfixing resource names) |
-| dns_prefix | A prefix for globally-unique dns-based resources |
 | location | The Azure Region to deploy these resources in |
+| dns_prefix | A prefix for globally-unique dns-based resources |
 | plan_tier | The App Service Plan tier to deploy |
-| plan_sku | The App Service Plan SKU to deploy|
+| plan_sku | The App Service Plan SKU to deploy |
+| storage_replication | The Storage Account Replication Type |
+| terraform_backend_state_container_name | The name of the Storage Container to hold the Terraform remote backend |
 
 
 ## Usage
