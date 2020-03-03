@@ -1,3 +1,9 @@
+#docker container run -it --rm --mount type=bind,source="$PWD",target=/workspace zenika/terraform-azure-cli:latest
+#apt-get install jq
+#az login
+#./infrastructure/init_terraform.sh 
+
+
 #Path to terraform config
 TERRAFORM_CONFIG=variables.tf.json
 

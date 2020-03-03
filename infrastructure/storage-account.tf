@@ -14,3 +14,9 @@ resource "azurerm_storage_container" "terraform" {
   storage_account_name  = azurerm_storage_account.default.name
   container_access_type = "private"
 }
+
+resource "azurerm_storage_container" "default" {
+  name                  = var.name
+  storage_account_name  = azurerm_storage_account.default.name
+  container_access_type = "private"
+}
