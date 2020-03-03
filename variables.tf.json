@@ -1,0 +1,76 @@
+{
+  "variable": [
+    {
+      "name": [
+        {
+          "default": "demo-tfquickstart",
+          "description": "Location of the azure resource group.",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "environment": [
+        {
+          "default": "develop",
+          "description": "Name of the deployment environment",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "location": [
+        {
+          "default": "southcentralus",
+          "description": "Location to deploy the resoruce group",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "dns_prefix": [
+        {
+          "default": "tfq",
+          "description": "A prefix for any dns based resources",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "plan_tier": [
+        {
+          "default": "Standard",
+          "description": "The tier of app service plan to create",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "plan_sku": [
+        {
+          "default": "S1",
+          "description": "The sku of app service plan to create",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "storage_replication": [
+        {
+          "default": "LRS",
+          "description": "Replication type for the storage account",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "terraform_backend_state_container_name": [
+        {
+          "default": "infrastructure-state",
+          "description": "Name of the storage container for terraform remote persistence",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+}
