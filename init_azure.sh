@@ -6,4 +6,4 @@
 echo "Installing dependencies ......"
 dpkg -l | grep -qw jq || apt-get update > /dev/null && apt-get install -y jq > /dev/null
 az login
-cd ./infrastructure && ./init_terraform.sh
+cd ./infrastructure/azure && ./init_terraform.sh
