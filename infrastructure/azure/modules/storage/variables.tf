@@ -6,4 +6,3 @@ variable "plan_tier" {}
 variable "resource_group_name" {}
 variable "resource_group_location" {}
 variable "storage_replication" {}
-variable "terraform_backend_state_container_name" {}

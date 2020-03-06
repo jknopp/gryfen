@@ -1,14 +1,18 @@
 #!/bin/bash
 
-if [[ $# -lt 1 || "$1" == "" ]]; then
-   echo "The .tfvars.json path parameter is required." && exit 1
+# if [[ $# -lt 1 || "$1" == "" ]]; then
+#    echo "The .tfvars.json path parameter is required." && exit 1
+if [[ $# -lt 2 || "$1" == "" ]]; then
+   echo "The .tfvars.json path and the terraform managed state conatiner parameters are required:"
+   echo "init_terraform {relative_path:string} {managed_state:bool}"
+   exit 1
 else
     #Path to terraform configs
     TERRAFORM_ENV_VARIABLES=$1
     TERRAFORM_VARIABLES=global.tfvars.json
-    STORAGE_ACCOUNT_MODULE_PATH="./modules/storage"
+    TERRAFORM_MANAGE_STATE_CONTAINER=$2
 
-    # Load variables from the terraform config
+    # Load variables from the terraform config, using 'jq' to parse the variables
     APP_NAME=$(cat $TERRAFORM_VARIABLES | jq -r .name)
     ENVIRONMENT=$(cat $TERRAFORM_ENV_VARIABLES | jq -r .environment)
     LOCATION=$(cat $TERRAFORM_VARIABLES | jq -r .location)
@@ -50,5 +54,8 @@ else
     terraform import -var-file=$TERRAFORM_VARIABLES -var-file=$TERRAFORM_ENV_VARIABLES module.storage.azurerm_storage_account.default $STORAGE_ACCOUNT_ID
 
     # Import the storage container to the terraform state
-    terraform import -var-file=$TERRAFORM_VARIABLES -var-file=$TERRAFORM_ENV_VARIABLES module.storage.azurerm_storage_container.terraform $STORAGE_CONTAINER_URL 
+    # Removed: see comment in /modules/storage/storage.tf
+    if [[ $# -gt 1 && "$2" == true ]]; then
+        terraform import -var-file=$TERRAFORM_VARIABLES -var-file=$TERRAFORM_ENV_VARIABLES module.terraformstate.azurerm_storage_container.terraform $STORAGE_CONTAINER_URL 
+    fi
 fi

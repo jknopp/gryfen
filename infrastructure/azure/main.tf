@@ -8,6 +8,12 @@ provider "azurerm" {
   features {}
 }
 
+module "terraformstate" {
+  source = "./modules/terraformstate"
+  storage_account_name = module.storage.storage_account_name
+  terraform_backend_state_container_name = var.terraform_backend_state_container_name
+}
+
 module "rg" {
   source = "./modules/resourcegroup"
   name = var.name
@@ -33,7 +39,6 @@ module "storage" {
   dns_prefix = var.dns_prefix
   plan_tier = var.plan_tier
   storage_replication = var.storage_replication
-  terraform_backend_state_container_name = var.terraform_backend_state_container_name
   resource_group_name = module.rg.resource_group_name
   resource_group_location = module.rg.resource_group_location
 }
