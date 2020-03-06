@@ -9,20 +9,20 @@ provider "azurerm" {
 }
 
 module "terraformstate" {
-  source = "./modules/terraformstate"
+  source = "../modules/terraformstate"
   storage_account_name = module.storage.storage_account_name
   terraform_backend_state_container_name = var.terraform_backend_state_container_name
 }
 
 module "rg" {
-  source = "./modules/resourcegroup"
+  source = "../modules/resourcegroup"
   name = var.name
   environment = var.environment
   location = var.location
 }
 
 module "webapp" {
-  source = "./modules/webapp"
+  source = "../modules/webapp"
   name = var.name
   environment = var.environment
   dns_prefix = var.dns_prefix
@@ -33,7 +33,7 @@ module "webapp" {
 }
 
 module "storage" {
-  source = "./modules/storage"
+  source = "../modules/storage"
   name = var.name
   environment = var.environment
   dns_prefix = var.dns_prefix

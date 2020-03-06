@@ -1,0 +1,19 @@
+#!/bin/bash
+
+if [[ $# -lt 2 || "$1" == "" ]]; then
+   echo "The .tfvars.json path and the terraform managed state conatiner parameters are required:"
+   echo "init_terraform {relative_path:string} {managed_state:bool}"
+   exit 1
+else
+    # Check if jq is installed, if not install it for parsing JSON
+    echo "Installing dependencies ......"
+    dpkg -l | grep -qw jq || apt-get update > /dev/null && apt-get install -y jq > /dev/null
+    az login
+    if [[ "$2" == true ]]; then
+        cd ./mutable 
+        ../init_terraform $1 $2
+    else
+        cd ./immutable 
+        ../init_terraform $1 $2
+    fi
+fi

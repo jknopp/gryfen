@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# if [[ $# -lt 1 || "$1" == "" ]]; then
-#    echo "The .tfvars.json path parameter is required." && exit 1
 if [[ $# -lt 2 || "$1" == "" ]]; then
    echo "The .tfvars.json path and the terraform managed state conatiner parameters are required:"
    echo "init_terraform {relative_path:string} {managed_state:bool}"
@@ -55,7 +53,7 @@ else
 
     # Import the storage container to the terraform state
     # Removed: see comment in /modules/storage/storage.tf
-    if [[ $# -gt 1 && "$2" == true ]]; then
+    if [[ "$2" == true ]]; then
         terraform import -var-file=$TERRAFORM_VARIABLES -var-file=$TERRAFORM_ENV_VARIABLES module.terraformstate.azurerm_storage_container.terraform $STORAGE_CONTAINER_URL 
     fi
 fi
