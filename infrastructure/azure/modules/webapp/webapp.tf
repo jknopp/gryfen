@@ -1,7 +1,7 @@
 resource "azurerm_app_service_plan" "default" {
   name                = "${var.name}-plan"
-  location            = azurerm_resource_group.default.location
-  resource_group_name = azurerm_resource_group.default.name
+  location            = var.resource_group_location
+  resource_group_name = var.resource_group_name
   kind                = "Windows"
 
   sku {
@@ -12,8 +12,8 @@ resource "azurerm_app_service_plan" "default" {
 
 resource "azurerm_app_service" "default" {
   name                = "${var.dns_prefix}-${var.name}-aspnet-${var.environment}-app"
-  location            = azurerm_resource_group.default.location
-  resource_group_name = azurerm_resource_group.default.name
+  location            = var.resource_group_location
+  resource_group_name = var.resource_group_name
   app_service_plan_id = azurerm_app_service_plan.default.id
 
   site_config {
