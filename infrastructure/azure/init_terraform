@@ -40,20 +40,22 @@ else
     # Create blob container
     echo "Creating blob container ......"
     CONTAINER_SUCCESS=$(az storage container create --name $TERRAFORM_BACKEND_STATE_CONTAINER_NAME --account-name $STORAGE_ACCOUNT_NAME --account-key $ACCOUNT_KEY)
+    echo $CONTAINER_SUCCESS #TODO fix this query
 
-    # Initialize terraform to use our storage account for remote storage
-    terraform init \
-        -backend-config="resource_group_name=$RESOURCE_GROUP_NAME" -backend-config="storage_account_name=$STORAGE_ACCOUNT_NAME" -backend-config="container_name=$TERRAFORM_BACKEND_STATE_CONTAINER_NAME" -backend-config="key=$TERRAFORM_STATE_FILENAME"
-
-    # Import the resource group to the terraform state
-    terraform import -var-file=$TERRAFORM_VARIABLES -var-file=$TERRAFORM_ENV_VARIABLES module.rg.azurerm_resource_group.default $RESOURCE_GROUP_ID
-
-    # Import the storage account to the terraform state
-    terraform import -var-file=$TERRAFORM_VARIABLES -var-file=$TERRAFORM_ENV_VARIABLES module.storage.azurerm_storage_account.default $STORAGE_ACCOUNT_ID
-
-    # Import the storage container to the terraform state
-    # Removed: see comment in /modules/storage/storage.tf
+    # Import the infrastructure for the terraform state
+    # MUTABLE: see comment in /modules/storage/storage.tf
     if [[ "$2" == true ]]; then
+        # Initialize terraform to use our storage account for remote storage
+        terraform init \
+            -backend-config="resource_group_name=$RESOURCE_GROUP_NAME" -backend-config="storage_account_name=$STORAGE_ACCOUNT_NAME" -backend-config="container_name=$TERRAFORM_BACKEND_STATE_CONTAINER_NAME" -backend-config="key=$TERRAFORM_STATE_FILENAME"
+
+        # Import the resource group to the terraform state
+        terraform import -var-file=$TERRAFORM_VARIABLES -var-file=$TERRAFORM_ENV_VARIABLES module.rg.azurerm_resource_group.default $RESOURCE_GROUP_ID
+
+        # Import the storage account to the terraform state
+        terraform import -var-file=$TERRAFORM_VARIABLES -var-file=$TERRAFORM_ENV_VARIABLES module.storage.azurerm_storage_account.default $STORAGE_ACCOUNT_ID
+        
+        # Import the storage container to the terraform state
         terraform import -var-file=$TERRAFORM_VARIABLES -var-file=$TERRAFORM_ENV_VARIABLES module.terraformstate.azurerm_storage_container.terraform $STORAGE_CONTAINER_URL 
     fi
 fi

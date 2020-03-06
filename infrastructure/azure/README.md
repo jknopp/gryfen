@@ -19,6 +19,10 @@ This template deploys an [Azure App Service](https://www.terraform.io/docs/provi
 
 ## Usage
 
+### Immutable vs Mutable
+TODO
+
+
 ```bash
 >  terraform plan
 Refreshing Terraform state in-memory prior to plan...
