@@ -10,8 +10,12 @@ provider "azurerm" {
 
 module "terraformstate" {
   source = "../modules/terraformstate"
-  storage_account_name = module.storage.storage_account_name
+  name = var.name
+  environment = var.environment
+  location = var.location
   terraform_backend_state_container_name = var.terraform_backend_state_container_name
+  infrastructure_plan_tier = var.plan_tier
+  infrastructure_storage_replication = var.storage_replication
 }
 
 module "rg" {

@@ -2,6 +2,7 @@
 Testing things...
 ```bash
 cd infrastructure/azure
+./init_local ../env/dev.tfvars.json true|false
 ./init_terraform ../env/dev.tfvars.json true|false
 terraform apply -var-file=./global.tfvars.json -var-file=../env/dev.tfvars.json
 terraform destroy -var-file=./global.tfvars.json -var-file=../env/dev.tfvars.json
