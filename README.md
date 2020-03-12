@@ -16,7 +16,7 @@ Launch the container which contains the Azure CLI and Terraform, passing it our 
 ```bash
 cd infrastructure/azure
 docker container run -it --rm --mount type=bind,source=$PWD,target=/workspace zenika/terraform-azure-cli:latest ./init_local ../env/dev.tfvars.json true|false
-cd mutable|immutable
+cd mutable|immutable # Depending on which type of infrastructure you are trying to initialize
 terraform apply -var-file=./global.tfvars.json -var-file=../env/dev.tfvars.json
 terraform destroy -var-file=./global.tfvars.json -var-file=../env/dev.tfvars.json
 ```
