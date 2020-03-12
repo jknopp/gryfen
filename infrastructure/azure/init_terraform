@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# https://stackoverflow.com/questions/39296472/how-to-check-if-an-environment-variable-exists-and-get-its-value
+
+if [[ $# -ne 2 || "$1" == "" ]]; then
+   echo "The .tfvars.json path and the terraform managed state conatiner parameters are required:"
+   echo "init_terraform {relative_path:string} {managed_state:bool}"
+   exit 1
+else
+    TERRAFORM_MANAGE_STATE_CONTAINER=$2
+    
+    source ../scripts/sh/add_env_variables $1
+
+    # Create resources
+    source ../scripts/sh/bootstrap_azure_terraform
+
+    # Initialize terraform to use our storage account for remote storage
+    ../scripts/sh/terraform_init
+   
+    # Import the infrastructure for the terraform state
+    # MUTABLE: see comment in /modules/storage/storage.tf
+    if [[ "$TERRAFORM_MANAGE_STATE_CONTAINER" == true ]]; then
+        ../scripts/sh/import_terraform_state
+    fi
+fi
