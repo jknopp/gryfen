@@ -3,7 +3,8 @@ Testing things...
 
 ### CI/CD - Setup Azure Environment using Azure CLI & Terraform
  * Create a new Azure DevOps project
- * Inside the project create a new Azure Resource Manager using service principal authentication
+ * Create a new [Service Connection](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/service-endpoints?view=azure-devops&tabs=yaml)
+   * The type should be a new [Azure Resource Manager using service principal authentication](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/service-endpoints?view=azure-devops&tabs=yaml#sep-azure-resource-manager)
    * Note the 'Service connection name'
  * Setup a new YAML Pipeline based off [infrastructure/azure/azure-pipelines.yml](infrastructure/azure/azure-pipelines.yml)
  * Create a new variable named 'SERVICE_CONNECTION_NAME' with the value setup for the 'Service connection name'
