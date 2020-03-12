@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# TODO Get the subscirption name and ID and assign to SERVICE_CONNECTION_NAME
+
 # Create resource group
 echo "Creating resource group ......"
 export RESOURCE_GROUP_ID=$(az group create --name $RESOURCE_GROUP_NAME --location $LOCATION --query 'id' -o tsv)
