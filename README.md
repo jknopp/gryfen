@@ -13,7 +13,7 @@ Testing things...
 ### Local
 Container credit to: https://github.com/Zenika/terraform-azure-cli
 
-Launch the container which contains the Azure CLI and Terraform, passing it our initialization scirpt:
+Launch the container which contains the Azure CLI and Terraform, passing it our [init script](infrastructure/azure/init_local):
 
 ```bash
 cd infrastructure/azure
