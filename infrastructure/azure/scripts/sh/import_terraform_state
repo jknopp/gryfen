@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Import the resource group to the terraform state
+terraform import -var-file=$TERRAFORM_VARIABLES -var-file=$TERRAFORM_ENV_VARIABLES module.terraformstate.azurerm_resource_group.infrastructure_rg $RESOURCE_GROUP_ID
+
+# Import the storage account to the terraform state
+terraform import -var-file=$TERRAFORM_VARIABLES -var-file=$TERRAFORM_ENV_VARIABLES module.terraformstate.azurerm_storage_account.infrastructure_storage $STORAGE_ACCOUNT_ID
+
+# Import the storage container to the terraform state
+terraform import -var-file=$TERRAFORM_VARIABLES -var-file=$TERRAFORM_ENV_VARIABLES module.terraformstate.azurerm_storage_container.infrastructure_container $STORAGE_CONTAINER_URL 

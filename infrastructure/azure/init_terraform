@@ -1,60 +1,25 @@
 #!/bin/bash
 
-if [[ $# -lt 2 || "$1" == "" ]]; then
+# https://stackoverflow.com/questions/39296472/how-to-check-if-an-environment-variable-exists-and-get-its-value
+
+if [[ $# -ne 2 || "$1" == "" ]]; then
    echo "The .tfvars.json path and the terraform managed state conatiner parameters are required:"
    echo "init_terraform {relative_path:string} {managed_state:bool}"
    exit 1
 else
-    #Path to terraform configs
-    TERRAFORM_ENV_VARIABLES=$1
-    TERRAFORM_VARIABLES=global.tfvars.json
     TERRAFORM_MANAGE_STATE_CONTAINER=$2
+    
+    source ../scripts/sh/add_env_variables $1
 
-    # Load variables from the terraform config, using 'jq' to parse the variables
-    APP_NAME=$(cat $TERRAFORM_VARIABLES | jq -r .name)
-    ENVIRONMENT=$(cat $TERRAFORM_ENV_VARIABLES | jq -r .environment)
-    LOCATION=$(cat $TERRAFORM_VARIABLES | jq -r .location)
-    PLAN_TIER=$(cat $TERRAFORM_ENV_VARIABLES | jq -r .plan_tier)
-    REPLICATION_TYPE=$(cat $TERRAFORM_ENV_VARIABLES | jq -r .storage_replication)
-    DNS_PREFIX=$(cat $TERRAFORM_VARIABLES | jq -r .dns_prefix)
-    TERRAFORM_BACKEND_STATE_CONTAINER_NAME=$(cat $TERRAFORM_VARIABLES | jq -r .terraform_backend_state_container_name)
-    TERRAFORM_STATE_FILENAME=$ENVIRONMENT.terraform.tfstate
-
-    # Setup azure parameters
-    RESOURCE_GROUP_NAME=infrastructure-$APP_NAME-$ENVIRONMENT-rg
-    STORAGE_ACCOUNT_NAME=infra${ENVIRONMENT}
-    STORAGE_ACCOUNT_SKU=${PLAN_TIER}_${REPLICATION_TYPE}
-    STORAGE_CONTAINER_URL=https://$STORAGE_ACCOUNT_NAME.blob.core.windows.net/$TERRAFORM_BACKEND_STATE_CONTAINER_NAME
-
-    # Create resource group
-    echo "Creating resource group ......"
-    RESOURCE_GROUP_ID=$(az group create --name $RESOURCE_GROUP_NAME --location $LOCATION --query 'id' -o tsv)
-
-    # Create storage account
-    echo "Creating storage account ......"
-    STORAGE_ACCOUNT_ID=$(az storage account create --resource-group $RESOURCE_GROUP_NAME --name $STORAGE_ACCOUNT_NAME --sku $STORAGE_ACCOUNT_SKU --encryption-services blob --query 'id' -o tsv)
-
-    # Get storage account key
-    ACCOUNT_KEY=$(az storage account keys list --resource-group $RESOURCE_GROUP_NAME --account-name $STORAGE_ACCOUNT_NAME --query [0].value -o tsv)
-
-    # Create blob container
-    echo "Creating blob container ......"
-    CONTAINER_SUCCESS=$(az storage container create --name $TERRAFORM_BACKEND_STATE_CONTAINER_NAME --account-name $STORAGE_ACCOUNT_NAME --account-key $ACCOUNT_KEY --query 'created' -o tsv)
+    # Create resources
+    source ../scripts/sh/bootstrap_azure_terraform
 
     # Initialize terraform to use our storage account for remote storage
-    terraform init \
-        -backend-config="resource_group_name=$RESOURCE_GROUP_NAME" -backend-config="storage_account_name=$STORAGE_ACCOUNT_NAME" -backend-config="container_name=$TERRAFORM_BACKEND_STATE_CONTAINER_NAME" -backend-config="key=$TERRAFORM_STATE_FILENAME"
-
+    ../scripts/sh/terraform_init
+   
     # Import the infrastructure for the terraform state
     # MUTABLE: see comment in /modules/storage/storage.tf
-    if [[ "$2" == true ]]; then
-        # Import the resource group to the terraform state
-        terraform import -var-file=$TERRAFORM_VARIABLES -var-file=$TERRAFORM_ENV_VARIABLES module.terraformstate.azurerm_resource_group.infrastructure_rg $RESOURCE_GROUP_ID
-
-        # Import the storage account to the terraform state
-        terraform import -var-file=$TERRAFORM_VARIABLES -var-file=$TERRAFORM_ENV_VARIABLES module.terraformstate.azurerm_storage_account.infrastructure_storage $STORAGE_ACCOUNT_ID
-        
-        # Import the storage container to the terraform state
-        terraform import -var-file=$TERRAFORM_VARIABLES -var-file=$TERRAFORM_ENV_VARIABLES module.terraformstate.azurerm_storage_container.infrastructure_container $STORAGE_CONTAINER_URL 
+    if [[ "$TERRAFORM_MANAGE_STATE_CONTAINER" == true ]]; then
+        ../scripts/sh/import_terraform_state
     fi
 fi

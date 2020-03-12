@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Create resource group
+echo "Creating resource group ......"
+export RESOURCE_GROUP_ID=$(az group create --name $RESOURCE_GROUP_NAME --location $LOCATION --query 'id' -o tsv)
+echo "##vso[task.setvariable variable=RESOURCE_GROUP_ID]${RESOURCE_GROUP_ID}"
+
+# Create storage account
+echo "Creating storage account ......"
+export STORAGE_ACCOUNT_ID=$(az storage account create --resource-group $RESOURCE_GROUP_NAME --name $STORAGE_ACCOUNT_NAME --sku $STORAGE_ACCOUNT_SKU --encryption-services blob --query 'id' -o tsv)
+echo "##vso[task.setvariable variable=STORAGE_ACCOUNT_ID]${STORAGE_ACCOUNT_ID}"
+
+# Get storage account key
+ACCOUNT_KEY=$(az storage account keys list --resource-group $RESOURCE_GROUP_NAME --account-name $STORAGE_ACCOUNT_NAME --query [0].value -o tsv)
+
+# Create blob container
+echo "Creating blob container ......"
+CONTAINER_SUCCESS=$(az storage container create --name $TERRAFORM_BACKEND_STATE_CONTAINER_NAME --account-name $STORAGE_ACCOUNT_NAME --account-key ${ACCOUNT_KEY} --query 'created' -o tsv)
