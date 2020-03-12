@@ -11,6 +11,8 @@ TODO
    * Note the 'Service connection name'
  * Setup a new YAML Pipeline based off [infrastructure/azure/azure-pipelines.yml](infrastructure/azure/azure-pipelines.yml)
  * Create a new variable named 'SERVICE_CONNECTION_NAME' with the value setup for the 'Service connection name'
+   ![Variables Button](docs/img/variables1.PNG) 
+   ![Variable Setup](docs/img/variables2.PNG) 
 
 ### Local
 Container credit to: https://github.com/Zenika/terraform-azure-cli
