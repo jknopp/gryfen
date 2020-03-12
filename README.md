@@ -1,15 +1,14 @@
 # Gryfen
 Testing things...
 ```bash
-cd infrastructure/azure
 ./init_local ../env/dev.tfvars.json true|false
-./init_terraform ../env/dev.tfvars.json true|false
+cd mutable|immutable
 terraform apply -var-file=./global.tfvars.json -var-file=../env/dev.tfvars.json
 terraform destroy -var-file=./global.tfvars.json -var-file=../env/dev.tfvars.json
 ```
 
 ### Setup Azure Environment using Azure CLI & Terraform
-Container credit to: #https://github.com/Zenika/terraform-azure-cli
+Container credit to: https://github.com/Zenika/terraform-azure-cli
 
 Launch the container which contains the Azure CLI and Terraform, passing it our initialization scirpt:
 

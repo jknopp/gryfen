@@ -5,21 +5,29 @@ if [[ $# -lt 1 || "$1" == "" ]]; then
    exit 1
 else
     #Path to terraform configs
-    export TERRAFORM_ENV_VARIABLES=$1
-    export TERRAFORM_VARIABLES=global.tfvars.json #TODO Pass this in?
+    export TERRAFORM_VARIABLES=$1
+    export TERRAFORM_ENV_VARIABLES=$2
+    
 
     # Load variables from the terraform config, using 'jq' to parse the variables
-    export APP_NAME=$(cat $TERRAFORM_VARIABLES | jq -r .name)
-    export ENVIRONMENT=$(cat $TERRAFORM_ENV_VARIABLES | jq -r .environment)
+    APP_NAME=$(cat $TERRAFORM_VARIABLES | jq -r .name)
+    ENVIRONMENT=$(cat $TERRAFORM_ENV_VARIABLES | jq -r .environment)
     export LOCATION=$(cat $TERRAFORM_VARIABLES | jq -r .location)
-    export PLAN_TIER=$(cat $TERRAFORM_ENV_VARIABLES | jq -r .plan_tier)
-    export REPLICATION_TYPE=$(cat $TERRAFORM_ENV_VARIABLES | jq -r .storage_replication)
+    echo "##vso[task.setvariable variable=LOCATION]${LOCATION}"
+    PLAN_TIER=$(cat $TERRAFORM_ENV_VARIABLES | jq -r .plan_tier)
+    REPLICATION_TYPE=$(cat $TERRAFORM_ENV_VARIABLES | jq -r .storage_replication)
     export TERRAFORM_BACKEND_STATE_CONTAINER_NAME=$(cat $TERRAFORM_VARIABLES | jq -r .terraform_backend_state_container_name)
+    echo "##vso[task.setvariable variable=TERRAFORM_BACKEND_STATE_CONTAINER_NAME]${TERRAFORM_BACKEND_STATE_CONTAINER_NAME}"
     export TERRAFORM_STATE_FILENAME=$ENVIRONMENT.terraform.tfstate
+    echo "##vso[task.setvariable variable=TERRAFORM_STATE_FILENAME]${TERRAFORM_STATE_FILENAME}"
 
     # Setup azure parameters
     export RESOURCE_GROUP_NAME=infrastructure-$APP_NAME-$ENVIRONMENT-rg
+    echo "##vso[task.setvariable variable=RESOURCE_GROUP_NAME]${RESOURCE_GROUP_NAME}"
     export STORAGE_ACCOUNT_NAME=infra${ENVIRONMENT}
+    echo "##vso[task.setvariable variable=STORAGE_ACCOUNT_NAME]${STORAGE_ACCOUNT_NAME}"
     export STORAGE_ACCOUNT_SKU=${PLAN_TIER}_${REPLICATION_TYPE}
+    echo "##vso[task.setvariable variable=STORAGE_ACCOUNT_SKU]${STORAGE_ACCOUNT_SKU}"
     export STORAGE_CONTAINER_URL=https://$STORAGE_ACCOUNT_NAME.blob.core.windows.net/$TERRAFORM_BACKEND_STATE_CONTAINER_NAME
+    echo "##vso[task.setvariable variable=STORAGE_CONTAINER_URL]${STORAGE_CONTAINER_URL}"
 fi

@@ -1,16 +1,20 @@
 #!/bin/bash
 
+# https://stackoverflow.com/questions/39296472/how-to-check-if-an-environment-variable-exists-and-get-its-value
+
 if [[ $# -lt 2 || "$1" == "" ]]; then
    echo "The .tfvars.json path and the terraform managed state conatiner parameters are required:"
-   echo "init_terraform {relative_path:string} {managed_state:bool}"
+   echo "init_local {relative_path:string} {managed_state:bool}"
    exit 1
 else
     # TODO Make own Dockerfile to handle this
     # Check if jq is installed, if not install it for parsing JSON
     echo "Installing dependencies ......"
     dpkg -l | grep -qw jq || apt-get update > /dev/null && apt-get install -y jq > /dev/null
-    
+
+    TERRAFORM_MANAGE_STATE_CONTAINER=$2
     ACCOUNTS=$(az account list --refresh --query '[].id' | jq '.[]') 
+
     if [ -z "$ACCOUNTS" ]
     then
         az login
@@ -18,9 +22,21 @@ else
 
     if [[ "$2" == true ]]; then
         cd ./mutable 
-        ../init_terraform $1 $2
     else
         cd ./immutable 
-        ../init_terraform $1 $2
+    fi
+
+    source ../scripts/sh/add_env_variables global.tfvars.json $1
+
+    # Create resources
+    source ../scripts/sh/bootstrap_azure_terraform
+
+    # Initialize terraform to use our storage account for remote storage
+    ../scripts/sh/terraform_init
+   
+    # Import the infrastructure for the terraform state
+    # MUTABLE: see comment in /modules/storage/storage.tf
+    if [[ "$TERRAFORM_MANAGE_STATE_CONTAINER" == true ]]; then
+        ../scripts/sh/import_terraform_state
     fi
 fi
