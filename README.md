@@ -1,7 +1,8 @@
 # Gryfen
 Testing things...
 
-### CI/CD - Setup Azure Environment using Azure CLI & Terraform
+## Setup Azure Environment using Azure CLI & Terraform
+### CI/CD
  * Create a new Azure DevOps project
  * Create a new [Service Connection](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/service-endpoints?view=azure-devops&tabs=yaml#create-a-service-connection)
    * The type should be a new [Azure Resource Manager using service principal authentication](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/service-endpoints?view=azure-devops&tabs=yaml#sep-azure-resource-manager)
@@ -9,7 +10,7 @@ Testing things...
  * Setup a new YAML Pipeline based off [infrastructure/azure/azure-pipelines.yml](infrastructure/azure/azure-pipelines.yml)
  * Create a new variable named 'SERVICE_CONNECTION_NAME' with the value setup for the 'Service connection name'
 
-### Local - Setup Azure Environment using Azure CLI & Terraform
+### Local
 Container credit to: https://github.com/Zenika/terraform-azure-cli
 
 Launch the container which contains the Azure CLI and Terraform, passing it our initialization scirpt:
