@@ -11,16 +11,16 @@ variables:
   TERRAFORM_STATE_FILENAME: '<SET_BY_PIPELINE>'
 
 steps:
-  # - task: CopyFiles@2
-  #   inputs:
-  #     SourceFolder: 'infrastructure/azure'
-  #     Contents: '**'
-  #     TargetFolder: '$(build.artifactstagingdirectory)/terraform'
+  - task: CopyFiles@2
+    inputs:
+      SourceFolder: 'infrastructure/azure'
+      Contents: '**'
+      TargetFolder: '$(build.artifactstagingdirectory)/terraform'
       
-  # - task: PublishBuildArtifacts@1
-  #   displayName: 'Publish Artifact'
-  #   inputs:
-  #     PathtoPublish: '$(build.artifactstagingdirectory)'
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact'
+    inputs:
+      PathtoPublish: '$(build.artifactstagingdirectory)'
 
   - task: Bash@3
     displayName: 'Initialize Variables'
