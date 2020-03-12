@@ -9,6 +9,7 @@ variables:
   STORAGE_ACCOUNT_NAME: '<SET_BY_PIPELINE>'
   TERRAFORM_BACKEND_STATE_CONTAINER_NAME: '<SET_BY_PIPELINE>'
   TERRAFORM_STATE_FILENAME: '<SET_BY_PIPELINE>'
+  SERVICE_CONNECTION_NAME: 'Azure subscription 1 (e815734e-6d9b-46fd-8a72-fe6195236e5f)'
 
 steps:
   - task: CopyFiles@2
@@ -34,7 +35,7 @@ steps:
   - task: AzureCLI@1
     displayName: 'Azure CLI to bootstrap required Azure resources'
     inputs:
-      azureSubscription: 'Azure subscription 1 (e815734e-6d9b-46fd-8a72-fe6195236e5f)'
+      azureSubscription: '$(SERVICE_CONNECTION_NAME)'
       scriptPath: 'infrastructure/azure/scripts/sh/bootstrap_azure_terraform'
 
   - task: ms-devlabs.custom-terraform-tasks.custom-terraform-installer-task.TerraformInstaller@0
@@ -46,7 +47,7 @@ steps:
     displayName: 'Terraform : init'
     inputs:
       workingDirectory: 'infrastructure/azure/immutable'
-      backendServiceArm: 'Azure subscription 1 (e815734e-6d9b-46fd-8a72-fe6195236e5f)'
+      backendServiceArm: '$(SERVICE_CONNECTION_NAME)'
       backendAzureRmResourceGroupName: '$(RESOURCE_GROUP_NAME)'
       backendAzureRmStorageAccountName: '$(STORAGE_ACCOUNT_NAME)'
       backendAzureRmContainerName: '$(TERRAFORM_BACKEND_STATE_CONTAINER_NAME)'
@@ -58,7 +59,7 @@ steps:
       command: plan
       workingDirectory: 'infrastructure/azure/immutable'
       commandOptions: '-var-file=./global.tfvars.json -var-file=../env/dev.tfvars.json'
-      environmentServiceNameAzureRM: 'Azure subscription 1 (e815734e-6d9b-46fd-8a72-fe6195236e5f)'
+      environmentServiceNameAzureRM: '$(SERVICE_CONNECTION_NAME)'
 
   - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV1@0
     displayName: 'Terraform : apply -auto-approve'
@@ -66,4 +67,4 @@ steps:
       command: apply
       workingDirectory: 'infrastructure/azure/immutable'
       commandOptions: '-auto-approve -var-file=./global.tfvars.json -var-file=../env/dev.tfvars.json'
-      environmentServiceNameAzureRM: 'Azure subscription 1 (e815734e-6d9b-46fd-8a72-fe6195236e5f)'
+      environmentServiceNameAzureRM: '$(SERVICE_CONNECTION_NAME)'
