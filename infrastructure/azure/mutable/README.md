@@ -20,7 +20,7 @@ This template deploys an [Azure App Service](https://www.terraform.io/docs/provi
 ## Usage
 
 ```bash
-> terraform apply -var-file=./global.tfvars.json -var-file=../env/dev.tfvars.json
+>  terraform apply -var-file=./global.tfvars.json -var-file=../env/dev.tfvars.json
 Refreshing Terraform state in-memory prior to plan...
 The refreshed state will be used to calculate this plan, but will not be
 persisted to local or remote state storage.
