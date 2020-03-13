@@ -9,7 +9,7 @@ TODO
  * Create a new [Service Connection](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/service-endpoints?view=azure-devops&tabs=yaml#create-a-service-connection)
    * The type should be a new [Azure Resource Manager using service principal authentication](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/service-endpoints?view=azure-devops&tabs=yaml#sep-azure-resource-manager)
    * Note the 'Service connection name'
- * Setup a new YAML Pipeline based off [infrastructure/azure/azure-pipelines.yml](infrastructure/azure/azure-pipelines.yml)
+ * Setup a new YAML Pipeline based off [infrastructure/azure/azure-pipelines.yml](azure-pipelines.yml)
  * Create a new variable named 'SERVICE_CONNECTION_NAME' with the value setup for the 'Service connection name'
    ![Variables Button](/docs/img/variables1.PNG) 
    ![Variable Setup](/docs/img/variables2.PNG) 
@@ -17,7 +17,7 @@ TODO
 ### Local
 Container credit to: https://github.com/Zenika/terraform-azure-cli
 
-Launch the container which contains the Azure CLI and Terraform, passing it our [init script](infrastructure/azure/init_local):
+Launch the container which contains the Azure CLI and Terraform, passing it our [init script](init_local):
 
 ```bash
 cd infrastructure/azure
