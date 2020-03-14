@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# https://www.terraform.io/docs/commands/environment-variables.html
 # https://stackoverflow.com/questions/39296472/how-to-check-if-an-environment-variable-exists-and-get-its-value
 
 if [[ $# -lt 2 || "$1" == "" ]]; then
