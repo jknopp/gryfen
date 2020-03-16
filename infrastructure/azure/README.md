@@ -13,6 +13,7 @@ TODO
  * Create a new variable named 'SERVICE_CONNECTION_NAME' with the value setup for the 'Service connection name'
    ![Variables Button](/docs/img/variables1.PNG) 
    ![Variable Setup](/docs/img/variables2.PNG) 
+ * TODO Add BuildConfiguration variable
 
 ### Local
 Container credit to: https://github.com/Zenika/terraform-azure-cli
