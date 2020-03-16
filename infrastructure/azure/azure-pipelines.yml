@@ -3,11 +3,12 @@ trigger:
 
 # TODO Determine if a plan file should be used: https://www.terraform.io/docs/commands/plan.html#security-warning
 
-# This is required so we can pass our json variables files between stages until this is resovled:
-# https://github.com/microsoft/azure-pipelines-tasks/issues/4743
 variables:
+  # This is required so we can pass our json variables files between stages until this is resovled:
+  # https://github.com/microsoft/azure-pipelines-tasks/issues/4743
   INFRASTRUCTURE_VARIABLES: 'infrastructure-variables'
-  ENVIRONMENT: 'dev' #TODO Pass this in
+  #TODO Pass this in
+  ENVIRONMENT: 'dev'
 
 stages:
  - stage: Infrastructure
