@@ -1,6 +1,8 @@
 trigger:
 - master
 
+# TODO Determine if a plan file should be used: https://www.terraform.io/docs/commands/plan.html#security-warning
+
 # This is required so we can pass our json variables files between stages until this is resovled:
 # https://github.com/microsoft/azure-pipelines-tasks/issues/4743
 variables:
@@ -54,7 +56,6 @@ stages:
           backendAzureRmContainerName: '$(TERRAFORM_BACKEND_STATE_CONTAINER_NAME)'
           backendAzureRmKey: '$(TERRAFORM_STATE_FILENAME)'
       
-      # TODO Determine if a plan file should be used: https://www.terraform.io/docs/commands/plan.html#security-warning
       - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV1@0
         displayName: 'Terraform : plan'
         inputs:
