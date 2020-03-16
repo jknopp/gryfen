@@ -5,6 +5,7 @@ trigger:
 # https://github.com/microsoft/azure-pipelines-tasks/issues/4743
 variables:
   INFRASTRUCTURE_VARIABLES: 'infrastructure-variables'
+  ENVIRONMENT: 'dev' #TODO Pass this in
 
 stages:
  - stage: Infrastructure
@@ -28,7 +29,7 @@ stages:
         inputs:
           targetType: filePath
           filePath: 'infrastructure/azure/scripts/sh/add_env_variables'
-          arguments: 'immutable/global.tfvars.json env/dev.tfvars.json'
+          arguments: 'immutable/global.tfvars.json env/$(ENVIRONMENT).tfvars.json'
           workingDirectory: 'infrastructure/azure'
           failOnStderr: true
 
@@ -59,7 +60,7 @@ stages:
         inputs:
           command: plan
           workingDirectory: 'infrastructure/azure/immutable'
-          commandOptions: '-var-file=./global.tfvars.json -var-file=../env/dev.tfvars.json'
+          commandOptions: '-var-file=./global.tfvars.json -var-file=../env/$(ENVIRONMENT).tfvars.json'
           environmentServiceNameAzureRM: '$(SERVICE_CONNECTION_NAME)'
 
       - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV1@0
@@ -68,7 +69,7 @@ stages:
         inputs:
           command: apply
           workingDirectory: 'infrastructure/azure/immutable'
-          commandOptions: '-auto-approve -var-file=./global.tfvars.json -var-file=../env/dev.tfvars.json'
+          commandOptions: '-auto-approve -var-file=./global.tfvars.json -var-file=../env/$(ENVIRONMENT).tfvars.json'
           environmentServiceNameAzureRM: '$(SERVICE_CONNECTION_NAME)'
 
       - task: Bash@3
