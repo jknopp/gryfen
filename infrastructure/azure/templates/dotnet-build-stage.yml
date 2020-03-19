@@ -1,0 +1,59 @@
+stages:
+ - stage: Build
+   dependsOn: Infrastructure
+   jobs:
+   - job: Build
+     pool:
+      vmImage: 'ubuntu-latest'
+     
+     variables:
+       WEBAPP_NAME: '<SET_BY_PIPELINE>'
+
+     steps:    
+      - task: DownloadPipelineArtifact@2
+        inputs:
+          buildType: 'current'
+          artifactName: '$(INFRASTRUCTURE_VARIABLES)'
+          targetPath: '$(System.DefaultWorkingDirectory)'
+
+      - task: Bash@3
+        displayName: 'Initialize Build Stage Variables'
+        inputs:
+          targetType: 'inline'
+          script: |
+            WEBAPP_NAME=$(cat $(INFRASTRUCTURE_VARIABLES).json | jq ''.webapp_name.value'' -r)
+            echo "##vso[task.setvariable variable=WEBAPP_NAME]${WEBAPP_NAME}"
+
+      - task: DotNetCoreCLI@2
+        displayName: Restore
+        inputs:
+          command: restore
+          projects: '**/*.csproj'
+
+      - task: DotNetCoreCLI@2
+        displayName: Build
+        inputs:
+          projects: '**/*.csproj'
+          arguments: '--configuration $(BuildConfiguration)'
+
+      - task: DotNetCoreCLI@2
+        displayName: Test
+        inputs:
+          command: test
+          projects: '**/*[Tt]ests/*.csproj'
+          arguments: '--configuration $(BuildConfiguration)'
+
+      - task: DotNetCoreCLI@2
+        displayName: Publish
+        inputs:
+          command: publish
+          publishWebProjects: True
+          arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+          zipAfterPublish: True
+      
+      - task: PublishPipelineArtifact@1
+        displayName: 'Publish Artifact'
+        inputs:
+          targetPath: '$(Build.ArtifactStagingDirectory)'
+          artifact: '$(WEBAPP_NAME)'
+          publishLocation: 'pipeline'

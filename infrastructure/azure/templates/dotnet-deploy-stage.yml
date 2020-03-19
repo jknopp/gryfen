@@ -1,0 +1,44 @@
+stages:
+ - stage: Deploy
+   dependsOn: Build
+   jobs:
+   - deployment: Deploy
+     pool:
+      vmImage: 'ubuntu-latest'
+     environment: '$(ENVIRONMENT)'
+     
+     variables:
+       WEBAPP_NAME: '<SET_BY_PIPELINE>'
+
+     strategy:                 
+      runOnce:              
+        deploy:    
+          steps:
+            - task: DownloadPipelineArtifact@2
+              inputs:
+                buildType: 'current'
+                artifactName: '$(INFRASTRUCTURE_VARIABLES)'
+                targetPath: '$(System.DefaultWorkingDirectory)'
+
+            - task: Bash@3
+              displayName: 'Initialize Deploy Stage Variables'
+              inputs:
+                targetType: 'inline'
+                script: |
+                  WEBAPP_NAME=$(cat $(INFRASTRUCTURE_VARIABLES).json | jq ''.webapp_name.value'' -r)
+                  echo "##vso[task.setvariable variable=WEBAPP_NAME]${WEBAPP_NAME}"
+
+            - task: DownloadPipelineArtifact@2
+              displayName: 'Download Deploy Stage Variables'
+              inputs:
+                buildType: 'current'
+                artifactName: '$(WEBAPP_NAME)'
+                targetPath: '$(System.ArtifactsDirectory)'
+
+            - task: AzureRmWebAppDeployment@4
+              inputs:
+                ConnectionType: 'AzureRM'
+                azureSubscription: '$(SERVICE_CONNECTION_NAME)'
+                appType: 'webApp'
+                WebAppName: '$(WEBAPP_NAME)'
+                packageForLinux: '$(System.ArtifactsDirectory)/**/*.zip'
